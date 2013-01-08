@@ -1,4 +1,5 @@
 #!/bin/bash
+rm hakyll
 set -e
 cd "`dirname "$0"`"
 if [ ! -x hakyll ]; then
@@ -7,5 +8,6 @@ if [ ! -x hakyll ]; then
     rm hakyll.o
     rm hakyll.hi
 fi
+./hakyll clean
 ./hakyll build
-rsync --delete --recursive --progress _site/ logfish.net:/home/bram/vhost/bneijt.nl/_/blog
+rsync --delete --recursive --progress _site/ logfish.net:/home/bram/vhost/bneijt.nl/_/
