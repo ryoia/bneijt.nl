@@ -4,10 +4,11 @@ module Main where
 import           Control.Applicative ((<$>))
 import           Control.Arrow       (second)
 import           Control.Monad       (forM_)
-import           Data.List           (isPrefixOf)
+import           Data.List           (isPrefixOf, sortBy)
+import           Data.Ord            (comparing)
 import           Data.Monoid         (mappend)
 import           Hakyll
-import           System.FilePath     (dropTrailingPathSeparator, splitPath)
+import           System.FilePath     (dropTrailingPathSeparator, splitPath, takeBaseName, takeDirectory)
 import           Text.Pandoc
 
 main :: IO ()
@@ -19,7 +20,7 @@ main = hakyll $ do
         compile compressCssCompiler
 
     -- Render posts
-    match "blog/post/*.markdown" $ do
+    match "blog/post/**.markdown" $ do
         route   $ setExtension ".html"
         compile $ pandocCompiler >>= loadAndApplyTemplate "templates/post.html" postContext
 
@@ -33,7 +34,7 @@ main = hakyll $ do
     create ["blog/index.html"] $ do
         route idRoute
         compile $ do
-            list <- postList "blog/post/*" recentFirst
+            list <- postList "blog/post/**" recentDirectoryFirst
             makeItem ""
                 >>= loadAndApplyTemplate "templates/posts.html"
                         (constField "title" "Posts" `mappend`
@@ -49,6 +50,15 @@ postList pattern preprocess' = do
 
 dropPat :: String -> Routes
 dropPat pat = gsubRoute pat (const "")
+
+chronologicalDirectory :: [Item a] -> [Item a]
+chronologicalDirectory = sortBy $ comparing $ takeBaseName . takeDirectory . toFilePath . itemIdentifier
+
+
+--------------------------------------------------------------------------------
+-- | The reverse of 'chronological'
+recentDirectoryFirst :: [Item a] -> [Item a]
+recentDirectoryFirst = reverse . chronologicalDirectory
 
 postContext :: Context String
 postContext =
