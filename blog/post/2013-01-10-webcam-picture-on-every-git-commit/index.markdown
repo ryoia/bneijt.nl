@@ -3,7 +3,7 @@ title: Webcam picture on every git commit
 date: 2013-01-10
 ---
 
-About a month back, I came across a [Hacker News item](http://news.ycombinator.com/item?id=4151327) about taking a picture at every git commit. And as I liked the idea, I looked at what people where doing to get it to work. As most solutions seemed to complicated to me, I decided to implement my own. Below I'll give insight into the pieces of my git webcam snapshotting setup.
+About a month back, I came across a [Hacker News item](http://news.ycombinator.com/item?id=4151327) about taking a picture at every git commit. As I liked the idea, I decided to look at what people where doing to get it to work. Because most solutions seemed to complicated, I decided to implement my own. Below I'll give insight into the pieces of my git webcam snapshotting setup.
 
 Taking a webcam snapshot
 ------------------------
@@ -62,24 +62,25 @@ Best part of course are the pictures.
 <div class="row">
     <div class="six columns">
         <a href="snapshot1.jpg" class="th">
-            <img width="320" height="240" src="snapshot1.jpg" alt="Snapshot 1" />
+            <img width="320" height="240" src="400x300/snapshot1.jpg" alt="Snapshot 1" />
         </a>
     </div>
     <div class="six columns">
         <a href="snapshot2.jpg" class="th">
-            <img width="320" height="240" src="snapshot2.jpg" alt="Snapshot 2" />
+            <img width="320" height="240" src="400x300/snapshot2.jpg" alt="Snapshot 2" />
         </a>
     </div>
 </div>
+<div class="row"><p></p></div>
 <div class="row">
     <div class="six columns">
         <a href="snapshot3.jpg" class="th">
-            <img width="320" height="240" src="snapshot3.jpg" alt="Snapshot 3" />
+            <img width="320" height="240" src="400x300/snapshot3.jpg" alt="Snapshot 3" />
         </a>
     </div>
     <div class="six columns">
         <a href="snapshot4.jpg" class="th">
-            <img width="320" height="240" src="snapshot4.jpg" alt="Snapshot 4" />
+            <img width="320" height="240" src="400x300/snapshot4.jpg" alt="Snapshot 4" />
         </a>
     </div>
 </div>
