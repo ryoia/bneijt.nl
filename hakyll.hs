@@ -20,9 +20,13 @@ main = hakyll $ do
         compile compressCssCompiler
 
     -- Render posts
-    match "blog/post/**.markdown" $ do
+    match "blog/post/*/index.markdown" $ do
         route   $ setExtension ".html"
         compile $ pandocCompiler >>= loadAndApplyTemplate "templates/post.html" postContext
+
+    match "blog/post/**.jpg" $ do
+        route   idRoute
+        compile copyFileCompiler
 
     match "static/**" $ do
         route   $ dropPat "static/"
@@ -34,7 +38,7 @@ main = hakyll $ do
     create ["blog/index.html"] $ do
         route idRoute
         compile $ do
-            list <- postList "blog/post/**" recentDirectoryFirst
+            list <- postList "blog/post/*/index.markdown" recentDirectoryFirst
             makeItem ""
                 >>= loadAndApplyTemplate "templates/posts.html"
                         (constField "title" "Posts" `mappend`
