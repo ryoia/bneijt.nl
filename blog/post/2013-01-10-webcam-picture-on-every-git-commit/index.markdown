@@ -55,37 +55,34 @@ Because we want this script to be an interceptor for the real git, there are thr
 
 Only if the `git` command is successful the `webcamsnapshot` command will be executed. This means that every time a git commit goes through, a picture is taken.
 
-Result
-------
+Result!
+-------
 Best part of course are the pictures.
 
 <div class="row">
-    <div class="six columns">
-        <a href="snapshot1.jpg" class="th">
-            <img width="320" height="240" src="400x300/snapshot1.jpg" alt="Snapshot 1" />
-        </a>
-    </div>
-    <div class="six columns">
-        <a href="snapshot2.jpg" class="th">
-            <img width="320" height="240" src="400x300/snapshot2.jpg" alt="Snapshot 2" />
-        </a>
+    <div class="nine columns centered">
+        <ul class="block-grid two-up centered">
+            <li>
+                <a href="snapshot1.jpg" class="th">
+                   <img width="320" height="240" src="400x300/snapshot1.jpg" alt="Snapshot 1" />
+                </a>
+            </li>
+            <li>
+                <a href="snapshot2.jpg" class="th">
+                   <img width="320" height="240" src="400x300/snapshot2.jpg" alt="Snapshot 2" />
+                </a>
+            </li>
+            <li>
+                <a href="snapshot3.jpg" class="th">
+                   <img width="320" height="240" src="400x300/snapshot3.jpg" alt="Snapshot 3" />
+                </a>
+            </li>
+            <li>
+                <a href="snapshot4.jpg" class="th">
+                   <img width="320" height="240" src="400x300/snapshot4.jpg" alt="Snapshot 4" />
+                </a>
+            </li>
+        </ul>
     </div>
 </div>
-<div class="row"><p></p></div>
-<div class="row">
-    <div class="six columns">
-        <a href="snapshot3.jpg" class="th">
-            <img width="320" height="240" src="400x300/snapshot3.jpg" alt="Snapshot 3" />
-        </a>
-    </div>
-    <div class="six columns">
-        <a href="snapshot4.jpg" class="th">
-            <img width="320" height="240" src="400x300/snapshot4.jpg" alt="Snapshot 4" />
-        </a>
-    </div>
-</div>
-
-
-
-
 
