@@ -34,9 +34,13 @@ Now that we have a directory full of files, we can start doing some Haskell:
     isImageFileName name = any (flip isSuffixOf name) imageFileSuffixes
 
     imageFiles candidates = filter isImageFileName candidates
-    backgroundEntry path = "<static><duration>300</duration><file>" ++ path ++ "</file></static>"
+    backgroundEntry path = "<static><duration>300</duration><file>"
+        ++ path
+        ++ "</file></static>"
 
-    backgroundXml files = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<background>" ++ (concat (map backgroundEntry files)) ++ "</background>"
+    backgroundXml files = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<background>"
+        ++ (concat (map backgroundEntry files))
+        ++ "</background>"
 
     main = do
         cwd <- getCurrentDirectory
@@ -45,7 +49,11 @@ Now that we have a directory full of files, we can start doing some Haskell:
         putStrLn (backgroundXml (imageFiles paths))
 
 If you save this file as gen.hs and make it executable (`chmod u+x gen.hs`) you can generate
-the background xml using `./gen.hs > best_of_web_hd.xml`.
+the background xml using `./gen.hs > best_of_web_hd.xml`. If you get an error like
+
+    bash: ./gen.hs: /usr/bin/runghc: bad interpreter: No such file or directory
+
+you should install `ghc`.
 
 This gives us an XML file with the absolute path of each image. Now the last part of the puzzle to get it to work on Ubuntu GNOME remix 12.10:
 
