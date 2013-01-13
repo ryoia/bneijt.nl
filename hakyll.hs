@@ -66,5 +66,5 @@ recentDirectoryFirst = reverse . chronologicalDirectory
 
 postContext :: Context String
 postContext =
-    dateField "date" "%B %e, %Y" `mappend`
+    dateField "humanizedDate" "%B %e, %Y" `mappend`
     defaultContext
