@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-rm hakyll
+rm -f hakyll
 cd "`dirname "$0"`"
 if [ ! -x hakyll ]; then
     echo "Hakyll binary missing, trying to build it"
