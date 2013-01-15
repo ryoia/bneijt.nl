@@ -33,6 +33,10 @@ main = hakyll $ do
         route   idRoute
         compile copyFileCompiler
 
+    match "blog/post/**.png" $ do
+        route   idRoute
+        compile copyFileCompiler
+
     match "static/**" $ do
         route   $ dropPat "static/"
         compile $ copyFileCompiler
@@ -43,7 +47,7 @@ main = hakyll $ do
     create ["blog/index.html"] $ do
         route idRoute
         compile $ do
-            list <- postList "blog/post/*/index.markdown" recentDirectoryFirst
+            list <- postList "blog/post/*/index.markdown" chronologicalItem
             makeItem ""
                 >>= loadAndApplyTemplate "templates/posts.html"
                         (constField "title" "Posts" `mappend`
@@ -70,12 +74,7 @@ dateFieldOfItem :: Item String -> String
 dateFieldOfItem a = selectDateLine (itemBody a)
 
 chronologicalItem :: [Item String] -> [Item String]
-chronologicalItem = sortBy $ comparing $ dateFieldOfItem
-
---------------------------------------------------------------------------------
--- | The reverse of 'chronological'
-recentDirectoryFirst :: [Item String] -> [Item String]
-recentDirectoryFirst = reverse . chronologicalItem
+chronologicalItem = reverse . (sortBy $ comparing $ dateFieldOfItem)
 
 postContext :: Context String
 postContext =
