@@ -1,19 +1,17 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import           Control.Applicative ((<$>))
-import           Control.Arrow       (second)
-import           Control.Monad       (forM_, forM)
-import           Data.List           (isPrefixOf, sortBy, concat)
-import           Data.Map            (findWithDefault)
-import           Data.Ord            (comparing)
-import           Data.Monoid         (mappend)
-import           Hakyll
-import           System.FilePath     (dropTrailingPathSeparator, splitPath, takeBaseName, takeDirectory)
-import           Text.Pandoc
-import System.Locale (defaultTimeLocale)
-import Data.Maybe (fromMaybe)
-import Text.Regex (matchRegex, mkRegex)
+import      Control.Applicative ((<$>))
+import      Control.Arrow       (second)
+import      Control.Monad       (forM_, forM)
+import      Data.List           (isPrefixOf, sortBy, concat)
+import      Data.Map            (findWithDefault)
+import      Data.Ord            (comparing)
+import      Data.Monoid         (mappend)
+import      Hakyll
+import      System.FilePath     (dropTrailingPathSeparator, splitPath, takeBaseName, takeDirectory)
+import      Text.Pandoc
+import      System.Locale       (defaultTimeLocale)
 -- import Debug.Trace (trace)
 
 
@@ -55,6 +53,7 @@ main = hakyll $ do
                             constField "posts" list `mappend`
                             defaultContext)
 
+
 postList :: Pattern -> ([Item String] -> Compiler [Item String])
          -> Compiler String
 postList pattern preprocess' = do
@@ -62,30 +61,20 @@ postList pattern preprocess' = do
     posts       <- (loadAll pattern) >>= preprocess'
     applyTemplateList postItemTpl postContext posts
 
-selectDateLine :: String -> String
-selectDateLine body = concat (fromMaybe [""] (matchRegex (mkRegex "(<time[^>]+)") body))
-
 dropPat :: String -> Routes
 dropPat pat = gsubRoute pat (const "")
-
-chronologicalDirectory :: [Item String] -> [Item String]
-chronologicalDirectory = sortBy $ comparing $ takeBaseName . takeDirectory . toFilePath . itemIdentifier
-
-dateFieldOfItem :: Item String -> String
-dateFieldOfItem a = selectDateLine (itemBody a)
 
 chronologicalItems :: [Item a] -> Compiler [Item a] 
 chronologicalItems items = do 
     withTime <- forM items $ \item -> do 
         utc <- getItemUTC defaultTimeLocale $ itemIdentifier item 
-        return (utc, item) 
-
+        return (utc, item)
     return $ map snd $ reverse $ sortBy (comparing fst) withTime 
-
-chronologicalItem :: [Item String] -> [Item String]
-chronologicalItem = reverse . (sortBy $ comparing $ dateFieldOfItem)
 
 postContext :: Context String
 postContext =
     dateField "humanizedPublished" "%B %e, %Y" `mappend`
     defaultContext
+
+
+
