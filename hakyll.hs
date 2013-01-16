@@ -9,6 +9,7 @@ import      Data.Map            (findWithDefault)
 import      Data.Ord            (comparing)
 import      Data.Monoid         (mappend)
 import      Hakyll
+import      Hakyll.Core.Configuration (defaultConfiguration)
 import      System.FilePath     (dropTrailingPathSeparator, splitPath, takeBaseName, takeDirectory)
 import      Text.Pandoc
 import      System.Locale       (defaultTimeLocale)
@@ -17,7 +18,7 @@ import      System.Locale       (defaultTimeLocale)
 postsPattern = "blog/post/*/index.markdown"
 
 main :: IO ()
-main = hakyll $ do
+main = hakyllWith hakyllConfig $ do
 
     -- Compress CSS
     match "css/*" $ do
@@ -95,3 +96,7 @@ myFeedConfiguration = FeedConfiguration
     , feedRoot        = "http://bneijt.nl/blog/"
     }
 
+hakyllConfig :: Configuration
+hakyllConfig = defaultConfiguration
+  { deployCommand = "rsync --delete --recursive --progress _site/ bneijt.nl:/home/bram/vhost/bneijt.nl/_/"
+  }
