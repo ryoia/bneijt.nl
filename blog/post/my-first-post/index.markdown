@@ -1,6 +1,5 @@
 ---
 title: My first post
-date: 2013-01-09
 published: 2013-01-09
 author: Bram Neijt
 ---

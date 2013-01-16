@@ -3,7 +3,7 @@ module Main where
 
 import           Control.Applicative ((<$>))
 import           Control.Arrow       (second)
-import           Control.Monad       (forM_)
+import           Control.Monad       (forM_, forM)
 import           Data.List           (isPrefixOf, sortBy, concat)
 import           Data.Map            (findWithDefault)
 import           Data.Ord            (comparing)
@@ -11,6 +11,7 @@ import           Data.Monoid         (mappend)
 import           Hakyll
 import           System.FilePath     (dropTrailingPathSeparator, splitPath, takeBaseName, takeDirectory)
 import           Text.Pandoc
+import System.Locale (defaultTimeLocale)
 import Data.Maybe (fromMaybe)
 import Text.Regex (matchRegex, mkRegex)
 -- import Debug.Trace (trace)
@@ -47,18 +48,18 @@ main = hakyll $ do
     create ["blog/index.html"] $ do
         route idRoute
         compile $ do
-            list <- postList "blog/post/*/index.markdown" chronologicalItem
+            list <- postList "blog/post/*/index.markdown" chronologicalItems
             makeItem ""
                 >>= loadAndApplyTemplate "templates/posts.html"
                         (constField "title" "Posts" `mappend`
                             constField "posts" list `mappend`
                             defaultContext)
 
-postList :: Pattern -> ([Item String] -> [Item String])
+postList :: Pattern -> ([Item String] -> Compiler [Item String])
          -> Compiler String
 postList pattern preprocess' = do
     postItemTpl <- loadBody "templates/postitem.html"
-    posts       <- preprocess' <$> loadAll pattern
+    posts       <- (loadAll pattern) >>= preprocess'
     applyTemplateList postItemTpl postContext posts
 
 selectDateLine :: String -> String
@@ -73,10 +74,18 @@ chronologicalDirectory = sortBy $ comparing $ takeBaseName . takeDirectory . toF
 dateFieldOfItem :: Item String -> String
 dateFieldOfItem a = selectDateLine (itemBody a)
 
+chronologicalItems :: [Item a] -> Compiler [Item a] 
+chronologicalItems items = do 
+    withTime <- forM items $ \item -> do 
+        utc <- getItemUTC defaultTimeLocale $ itemIdentifier item 
+        return (utc, item) 
+
+    return $ map snd $ reverse $ sortBy (comparing fst) withTime 
+
 chronologicalItem :: [Item String] -> [Item String]
 chronologicalItem = reverse . (sortBy $ comparing $ dateFieldOfItem)
 
 postContext :: Context String
 postContext =
-    dateField "humanizedDate" "%B %e, %Y" `mappend`
+    dateField "humanizedPublished" "%B %e, %Y" `mappend`
     defaultContext
