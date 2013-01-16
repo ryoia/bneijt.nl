@@ -14,6 +14,7 @@ import      Text.Pandoc
 import      System.Locale       (defaultTimeLocale)
 -- import Debug.Trace (trace)
 
+postsPattern = "blog/post/*/index.markdown"
 
 main :: IO ()
 main = hakyll $ do
@@ -24,9 +25,11 @@ main = hakyll $ do
         compile compressCssCompiler
 
     -- Render posts
-    match "blog/post/*/index.markdown" $ do
+    match postsPattern $ do
         route   $ setExtension ".html"
-        compile $ pandocCompiler >>= loadAndApplyTemplate "templates/post.html" postContext
+        compile $ pandocCompiler
+            >>= saveSnapshot "body"
+            >>= loadAndApplyTemplate "templates/post.html" postContext
 
     match "blog/post/**.jpg" $ do
         route   idRoute
@@ -42,11 +45,18 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateCompiler
 
+    create ["blog/feed.atom"] $ do
+        route idRoute
+        compile $ do
+            let feedCtx = postContext `mappend` bodyField "description"
+            posts <- take 10 . recentFirst <$> loadAllSnapshots postsPattern "body"
+            renderAtom myFeedConfiguration feedCtx posts
+
     -- Post list
     create ["blog/index.html"] $ do
         route idRoute
         compile $ do
-            list <- postList "blog/post/*/index.markdown" chronologicalItems
+            list <- postList postsPattern chronologicalItems
             makeItem ""
                 >>= loadAndApplyTemplate "templates/posts.html"
                         (constField "title" "Posts" `mappend`
@@ -76,5 +86,12 @@ postContext =
     dateField "humanizedPublished" "%B %e, %Y" `mappend`
     defaultContext
 
-
+myFeedConfiguration :: FeedConfiguration
+myFeedConfiguration = FeedConfiguration
+    { feedTitle       = "Bram Neijt, blog"
+    , feedDescription = "Personal blog of Bram Neijt"
+    , feedAuthorName  = "Bram Neijt"
+    , feedAuthorEmail = "bneijt@gmail.com"
+    , feedRoot        = "http://bneijt.nl/blog/"
+    }
 
