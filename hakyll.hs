@@ -93,7 +93,7 @@ myFeedConfiguration = FeedConfiguration
     , feedDescription = "Personal blog of Bram Neijt"
     , feedAuthorName  = "Bram Neijt"
     , feedAuthorEmail = "bneijt@gmail.com"
-    , feedRoot        = "http://bneijt.nl/blog/"
+    , feedRoot        = "http://bneijt.nl"
     }
 
 hakyllConfig :: Configuration
