@@ -4,7 +4,7 @@ module Main where
 import      Control.Applicative ((<$>))
 import      Control.Arrow       (second)
 import      Control.Monad       (forM_, forM)
-import      Data.List           (isPrefixOf, sortBy, concat)
+import      Data.List           (isPrefixOf, isSuffixOf, sortBy)
 import      Data.Map            (findWithDefault)
 import      Data.Ord            (comparing)
 import      Data.Monoid         (mappend)
@@ -63,6 +63,16 @@ main = hakyllWith hakyllConfig $ do
                         (constField "title" "Posts" `mappend`
                             constField "posts" list `mappend`
                             defaultContext)
+                >>= cleanIndexUrls
+
+
+cleanIndexUrls :: Item String -> Compiler (Item String) 
+cleanIndexUrls = return . fmap (withUrls clean) 
+    where 
+        idx = "index.html" 
+        clean url 
+            | idx `isSuffixOf` url = take (length url - length idx) url 
+            | otherwise            = url
 
 
 postList :: Pattern -> ([Item String] -> Compiler [Item String])
