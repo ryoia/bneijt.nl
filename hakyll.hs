@@ -36,6 +36,14 @@ main = hakyllWith hakyllConfig $ do
         route   idRoute
         compile copyFileCompiler
 
+    match "blog/post/**.py" $ do
+        route   idRoute
+        compile copyFileCompiler
+
+    match "blog/post/**.sh" $ do
+        route   idRoute
+        compile copyFileCompiler
+
     match "blog/post/**.png" $ do
         route   idRoute
         compile copyFileCompiler
