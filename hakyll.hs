@@ -62,7 +62,7 @@ main = hakyllWith hakyllConfig $ do
         route idRoute
         compile $ do
             let feedCtx = postContext `mappend` bodyField "description"
-            posts <- take 10 . recentFirst <$> loadAllSnapshots postsPattern "body"
+            posts <- chronoFeed (loadAllSnapshots postsPattern "body")
             renderAtom myFeedConfiguration feedCtx posts
 
     -- Post list
@@ -96,6 +96,12 @@ postList pattern preprocess' = do
 
 dropPat :: String -> Routes
 dropPat pat = gsubRoute pat (const "")
+
+chronoFeed :: Compiler [Item a] -> Compiler [Item a]
+chronoFeed items = do
+    ul <- items
+    ol <- chronologicalItems ul
+    return (take 10 ol)
 
 chronologicalItems :: [Item a] -> Compiler [Item a] 
 chronologicalItems items = do 
