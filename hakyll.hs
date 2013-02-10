@@ -21,9 +21,15 @@ main :: IO ()
 main = hakyllWith hakyllConfig $ do
 
     -- Compress CSS
-    match "css/*" $ do
+    match "css/*.css" $ do
         route   idRoute
         compile compressCssCompiler
+
+    match "css/*.scss" $ do
+        route   $ setExtension "css"
+        compile $ getResourceString >>=
+            withItemBody (unixFilter "sass" ["-s", "--scss"]) >>=
+            return . fmap compressCss
 
     -- Render posts
     match postsPattern $ do

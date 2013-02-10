@@ -1,10 +1,7 @@
 /* Requires: normalize.css */
 /* Global Reset & Standards ---------------------- */
+.foundation {
 *, *:before, *:after { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
-
-html { font-size: 62.5%; }
-
-body { background: white; font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 14px; line-height: 1; color: #222222; position: relative; -webkit-font-smoothing: antialiased; }
 
 /* Links ---------------------- */
 a img { border: none; }
@@ -1074,3 +1071,4 @@ table.show-for-xlarge, table.show-for-large, table.hide-for-small, table.hide-fo
   .top-bar ul li.has-button { padding: 5px 15px; }
   .top-bar ul li .button.small { margin: 0 !important; display: inline-block; width: 100%; }
   .top-bar ul > li.has-button a.button { margin: 0; } }
+}//foundation nesting
