@@ -682,7 +682,7 @@ ul.inline-list > li, ul.link-list > li { list-style: none; float: left; margin-l
 ul.inline-list > li > *, ul.link-list > li > * { display: block; }
 
 /* Keytroke Characters ---------------------- */
-.keystroke, code, kbd { font-family: "Consolas", "Menlo", "Courier", monospace; font-size: 13px; padding: 2px 4px 0px; margin: 0; background: #ededed; border: solid 1px #dbdbdb; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; }
+.keystroke, code, kbd { font-family: "Consolas", "Menlo", "Courier", monospace; font-size: 13px; margin: 0; background: #ededed; border: solid 1px #dbdbdb; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; }
 
 /* Image Thumbnails ---------------------- */
 .th { display: block; }
