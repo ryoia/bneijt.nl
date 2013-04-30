@@ -68,7 +68,8 @@ main = hakyllWith hakyllConfig $ do
         route idRoute
         compile $ do
             let feedCtx = postContext `mappend` bodyField "description"
-            posts <- chronoFeed (loadAllSnapshots postsPattern "body")
+            selectedPosts <- chronoFeed (loadAllSnapshots postsPattern "body")
+            let posts = filterUrlsFromPosts selectedPosts
             renderAtom myFeedConfiguration feedCtx posts
 
     -- Post list
@@ -91,6 +92,12 @@ cleanIndexUrls = return . fmap (withUrls clean)
         clean url 
             | idx `isSuffixOf` url = take (length url - length idx) url 
             | otherwise            = url
+
+filterUrlsFromPosts :: [Item String] -> [Item String]
+filterUrlsFromPosts posts = map filterUrlsFromPost posts
+
+filterUrlsFromPost :: Item String -> Item String
+filterUrlsFromPost post = post
 
 
 postList :: Pattern -> ([Item String] -> Compiler [Item String])
