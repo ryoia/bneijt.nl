@@ -69,8 +69,8 @@ main = hakyllWith hakyllConfig $ do
         compile $ do
             let feedCtx = postContext `mappend` bodyField "description"
             selectedPosts <- chronoFeed (loadAllSnapshots postsPattern "body")
-            let posts = filterUrlsFromPosts selectedPosts
-            renderAtom myFeedConfiguration feedCtx posts
+            filteredPosts <- mapM replaceAllLinks selectedPosts
+            renderAtom myFeedConfiguration feedCtx filteredPosts
 
     -- Post list
     create ["blog/index.html"] $ do
@@ -85,19 +85,21 @@ main = hakyllWith hakyllConfig $ do
                 >>= cleanIndexUrls
 
 
-cleanIndexUrls :: Item String -> Compiler (Item String) 
-cleanIndexUrls = return . fmap (withUrls clean) 
+cleanIndexUrls :: Item String -> Compiler (Item String)
+cleanIndexUrls = return . fmap (withUrls clean)
     where 
         idx = "index.html" 
         clean url 
             | idx `isSuffixOf` url = take (length url - length idx) url 
             | otherwise            = url
 
-filterUrlsFromPosts :: [Item String] -> [Item String]
-filterUrlsFromPosts posts = map filterUrlsFromPost posts
+replaceAllLinks :: Item String -> Compiler (Item String)
+replaceAllLinks  = return . fmap (withUrls clean)
+    where
+        clean url 
+            | not (isExternal url)  = ""
+            | otherwise             = url
 
-filterUrlsFromPost :: Item String -> Item String
-filterUrlsFromPost post = post
 
 
 postList :: Pattern -> ([Item String] -> Compiler [Item String])
@@ -116,12 +118,12 @@ chronoFeed items = do
     ol <- chronologicalItems ul
     return (take 10 ol)
 
-chronologicalItems :: [Item a] -> Compiler [Item a] 
+chronologicalItems :: [Item a] -> Compiler [Item a]
 chronologicalItems items = do 
     withTime <- forM items $ \item -> do 
-        utc <- getItemUTC defaultTimeLocale $ itemIdentifier item 
+        utc <- getItemUTC defaultTimeLocale $ itemIdentifier item
         return (utc, item)
-    return $ map snd $ reverse $ sortBy (comparing fst) withTime 
+    return $ map snd $ reverse $ sortBy (comparing fst) withTime
 
 postContext :: Context String
 postContext =
