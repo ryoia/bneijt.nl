@@ -93,8 +93,11 @@ cleanIndexUrls = return . fmap (withUrls clean)
             | idx `isSuffixOf` url = take (length url - length idx) url 
             | otherwise            = url
 
+-- TODO: fmap (maybe empty toUrl) . getRoute . itemIdentifier
 replaceAllLinks :: Item String -> Compiler (Item String)
-replaceAllLinks  = return . fmap (withUrls clean)
+replaceAllLinks item = do
+    --let route = toUrl (getRoute (itemIdentifier item))
+    (return . fmap (withUrls clean)) item
     where
         clean url 
             | not (isExternal url)  = ""
