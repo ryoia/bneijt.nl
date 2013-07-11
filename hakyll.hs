@@ -33,7 +33,7 @@ main = hakyllWith hakyllConfig $ do
 
     -- Render posts
     match postsPattern $ do
-        route   $ setExtension ".html"
+        route   $ setExtension "html"
         compile $ pandocCompiler
             >>= saveSnapshot "body"
             >>= loadAndApplyTemplate "templates/post.html" postContext
