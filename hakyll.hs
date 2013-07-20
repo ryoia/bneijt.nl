@@ -15,6 +15,7 @@ import      Text.Pandoc
 import      System.Locale       (defaultTimeLocale)
 -- import Debug.Trace (trace)
 
+postsPattern :: String
 postsPattern = "blog/post/*/index.markdown"
 
 main :: IO ()
@@ -32,7 +33,13 @@ main = hakyllWith hakyllConfig $ do
             return . fmap compressCss
 
     -- Render posts
-    match postsPattern $ do
+    match (PostPattern postsPattern) $ do
+        route   $ setExtension "html"
+        compile $ pandocCompiler
+            >>= saveSnapshot "body"
+            >>= loadAndApplyTemplate "templates/post.html" postContext
+
+    match (postsPattern ++ ".runghc") $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
             >>= saveSnapshot "body"
