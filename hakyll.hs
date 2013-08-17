@@ -24,11 +24,11 @@ main = hakyllWith hakyllConfig $ do
 
     -- Compress CSS
     match (fromGlob "src/main/css/*.css") $ do
-        route   idRoute
+        route   $ dropPat "src/main/"
         compile compressCssCompiler
 
     match (fromGlob "src/main/css/*.scss") $ do
-        route   $ setExtension "css"
+        route   $ composeRoutes (dropPat "src/main/") (setExtension "css")
         compile $ getResourceString >>=
             withItemBody (unixFilter "sass" ["-s", "--scss"]) >>=
             return . fmap compressCss
