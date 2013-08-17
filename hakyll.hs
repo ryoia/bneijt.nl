@@ -50,22 +50,6 @@ main = hakyllWith hakyllConfig $ do
         route   idRoute
         compile copyFileCompiler
 
-    match (fromGlob "blog/post/**.py") $ do
-        route   idRoute
-        compile copyFileCompiler
-
-    match (fromGlob "blog/post/**.xz") $ do
-        route   idRoute
-        compile copyFileCompiler
-
-    match (fromGlob "blog/post/**.sh") $ do
-        route   idRoute
-        compile copyFileCompiler
-
-    match (fromGlob "blog/post/**.png") $ do
-        route   idRoute
-        compile copyFileCompiler
-
     match (fromGlob "static/**") $ do
         route   $ dropPat "static/"
         compile $ copyFileCompiler
