@@ -1,13 +1,7 @@
 #!/bin/bash
 set -e
-rm -f hakyll
 cd "`dirname "$0"`"
-if [ ! -x hakyll ]; then
-    echo "Hakyll binary missing, trying to build it"
-    ghc --make hakyll.hs
-    rm hakyll.o
-    rm hakyll.hi
-fi
-./hakyll clean
-./hakyll build
+cabal-dev build
+dist/build/bneijt.nl/bneijt.nl clean
+dist/build/bneijt.nl/bneijt.nl build
 
