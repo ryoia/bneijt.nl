@@ -23,11 +23,11 @@ main :: IO ()
 main = hakyllWith hakyllConfig $ do
 
     -- Compress CSS
-    match (fromGlob "css/*.css") $ do
+    match (fromGlob "src/main/css/*.css") $ do
         route   idRoute
         compile compressCssCompiler
 
-    match (fromGlob "css/*.scss") $ do
+    match (fromGlob "src/main/css/*.scss") $ do
         route   $ setExtension "css"
         compile $ getResourceString >>=
             withItemBody (unixFilter "sass" ["-s", "--scss"]) >>=
