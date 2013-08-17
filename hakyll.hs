@@ -46,10 +46,6 @@ main = hakyllWith hakyllConfig $ do
             >>= saveSnapshot "body"
             >>= loadAndApplyTemplate (fromFilePath "templates/post.html") postContext
 
-    match (fromGlob "blog/post/**.jpg") $ do
-        route   idRoute
-        compile copyFileCompiler
-
     match (fromGlob "static/**") $ do
         route   $ dropPat "static/"
         compile $ copyFileCompiler
