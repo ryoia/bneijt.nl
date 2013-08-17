@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
 import      Control.Applicative ((<$>))
@@ -9,6 +9,8 @@ import      Data.Map            (findWithDefault)
 import      Data.Ord            (comparing)
 import      Data.Monoid         (mappend)
 import      Hakyll
+import      Hakyll.Core.Identifier.Pattern (fromGlob)
+import      Hakyll.Core.Identifier (fromFilePath)
 import      Hakyll.Core.Configuration (defaultConfiguration)
 import      System.FilePath     (dropTrailingPathSeparator, splitPath, takeBaseName, takeDirectory)
 import      Text.Pandoc
@@ -22,70 +24,70 @@ main :: IO ()
 main = hakyllWith hakyllConfig $ do
 
     -- Compress CSS
-    match "css/*.css" $ do
+    match (fromGlob "css/*.css") $ do
         route   idRoute
         compile compressCssCompiler
 
-    match "css/*.scss" $ do
+    match (fromGlob "css/*.scss") $ do
         route   $ setExtension "css"
         compile $ getResourceString >>=
             withItemBody (unixFilter "sass" ["-s", "--scss"]) >>=
             return . fmap compressCss
 
     -- Render posts
-    match (PostPattern postsPattern) $ do
+    match (fromGlob postsPattern) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
             >>= saveSnapshot "body"
-            >>= loadAndApplyTemplate "templates/post.html" postContext
+            >>= loadAndApplyTemplate (fromFilePath "templates/post.html") postContext
 
-    match (postsPattern ++ ".runghc") $ do
+    match (fromGlob (postsPattern ++ ".runghc")) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
             >>= saveSnapshot "body"
-            >>= loadAndApplyTemplate "templates/post.html" postContext
+            >>= loadAndApplyTemplate (fromFilePath "templates/post.html") postContext
 
-    match "blog/post/**.jpg" $ do
+    match (fromGlob "blog/post/**.jpg") $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "blog/post/**.py" $ do
+    match (fromGlob "blog/post/**.py") $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "blog/post/**.xz" $ do
+    match (fromGlob "blog/post/**.xz") $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "blog/post/**.sh" $ do
+    match (fromGlob "blog/post/**.sh") $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "blog/post/**.png" $ do
+    match (fromGlob "blog/post/**.png") $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "static/**" $ do
+    match (fromGlob "static/**") $ do
         route   $ dropPat "static/"
         compile $ copyFileCompiler
 
-    match "templates/*" $ compile templateCompiler
+    match (fromGlob "templates/*") $ compile templateCompiler
 
-    create ["blog/feed.atom"] $ do
+    create [fromFilePath "blog/feed.atom"] $ do
         route idRoute
         compile $ do
             let feedCtx = postContext `mappend` bodyField "description"
-            selectedPosts <- chronoFeed (loadAllSnapshots postsPattern "body")
+            selectedPosts <- chronoFeed (loadAllSnapshots (fromGlob postsPattern) "body")
             filteredPosts <- mapM replaceAllLinks selectedPosts
             renderAtom myFeedConfiguration feedCtx filteredPosts
 
     -- Post list
-    create ["blog/index.html"] $ do
+    create [fromFilePath "blog/index.html"] $ do
         route idRoute
         compile $ do
-            list <- postList postsPattern chronologicalItems
+            list <- postList (fromGlob postsPattern) chronologicalItems
             makeItem ""
-                >>= loadAndApplyTemplate "templates/posts.html"
+                >>= loadAndApplyTemplate (fromFilePath "templates/posts.html")
                         (constField "title" "Posts" `mappend`
                             constField "posts" list `mappend`
                             defaultContext)
@@ -115,7 +117,7 @@ replaceAllLinks item = do
 postList :: Pattern -> ([Item String] -> Compiler [Item String])
          -> Compiler String
 postList pattern preprocess' = do
-    postItemTpl <- loadBody "templates/postitem.html"
+    postItemTpl <- loadBody (fromFilePath "templates/postitem.html")
     posts       <- (loadAll pattern) >>= preprocess'
     applyTemplateList postItemTpl postContext posts
 
