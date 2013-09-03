@@ -16,7 +16,7 @@
     <script src="../../../js/libs/modernizr.foundation.js"></script>
 </head>
 <body>
-<div class="foundation">
+<div class="foundation" itemscope itemtype="http://schema.org/BlogPosting">
     <div class="row">
         <script type="text/javascript"><!--
         google_ad_client = "ca-pub-7399904085557293";
@@ -34,15 +34,16 @@
 
     <div class="row">
         <h1>
-            <small><a href="../../">blog</a> post</small><br />$title$
+            <small><a href="../../">blog</a> post</small><br />
+            <span itemprop="headine" >$title$</span>
         </h1>
-        <h6>Written by <author>$author$</author> on <time datetime="$published$">$humanizedPublished$</time>.</h6>
+        <h6>Written by <author>$author$</author> on <time itemprop="datePublished" datetime="$published$">$humanizedPublished$</time>.</h6>
     </div>
 
     <div class="row">
         <div class="ten columns" role="content">
             <article>
-                <div class="row">
+                <div class="row" itemprop="text">
                     $body$
                 </div>
             </article>
