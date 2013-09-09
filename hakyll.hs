@@ -33,6 +33,13 @@ main = hakyllWith hakyllConfig $ do
             withItemBody (unixFilter "sass" ["-s", "--scss"]) >>=
             return . fmap compressCss
 
+    -- Compress JS
+    match (fromGlob "src/main/libs/*/*.js") $ do
+        route   $ composeRoutes (dropPat "src/main/") (setExtension ".min.js")
+        compile $ getResourceString >>=
+            withItemBody (unixFilter "cat" []) >>=
+            return . fmap compressCss
+
     -- Render posts
     match (fromGlob postsPattern) $ do
         route   $ setExtension "html"
