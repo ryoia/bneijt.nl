@@ -12,7 +12,8 @@ import      Hakyll.Core.Identifier.Pattern (fromGlob)
 import      Hakyll.Core.Identifier (fromFilePath)
 import      Hakyll.Core.Configuration (defaultConfiguration)
 import      System.FilePath     (dropTrailingPathSeparator, splitPath, takeBaseName, takeDirectory)
-import      Text.Pandoc
+import qualified Text.Pandoc     as Pandoc
+
 import      System.Locale       (defaultTimeLocale)
 -- import Debug.Trace (trace)
 
@@ -30,7 +31,7 @@ main = hakyllWith hakyllConfig $ do
     match (fromGlob "src/main/css/*.scss") $ do
         route   $ composeRoutes (dropPat "src/main/") (setExtension "css")
         compile $ getResourceString >>=
-            withItemBody (unixFilter "sass" ["-s", "--scss"]) >>=
+            withItemBody (unixFilter "sass" ["-s", "--unix-newlines", "--scss"]) >>=
             return . fmap compressCss
 
     -- Compress JS
@@ -46,6 +47,16 @@ main = hakyllWith hakyllConfig $ do
         compile $ pandocCompiler
             >>= saveSnapshot "body"
             >>= loadAndApplyTemplate (fromFilePath "templates/post.html") postContext
+
+--    match (fromGlob postsPattern) $ (version "rtf") $ do
+--        route   $ setExtension "rtf"
+--        compile $ getResourceString
+--            >>= withItemBody (unixFilter "pandoc" ["--from=markdown", "--to=rtf", "--output=-", "--standalone", "-"])
+
+--    match (fromGlob postsPattern) $ (version "txt") $ do
+--        route   $ setExtension "txt"
+--        compile $ getResourceString
+--            >>= withItemBody (unixFilter "pandoc" ["--from=markdown", "--to=plain", "--output=-", "--standalone", "-"])
 
     match (fromGlob (postsPattern ++ ".runghc")) $ do
         route   $ setExtension "html"
@@ -139,5 +150,7 @@ myFeedConfiguration = FeedConfiguration
 
 hakyllConfig :: Configuration
 hakyllConfig = defaultConfiguration
-  { deployCommand = "rsync --delete --recursive --progress _site/ bneijt.nl:/home/bram/vhost/bneijt.nl/_/"
+  { deployCommand = "rsync --delete --times --checksum --compress --chmod=o+r --recursive --progress _site/ 149.210.136.127:/srv/http/site/bneijt.nl"
   }
+
+
