@@ -7,6 +7,7 @@ import      Data.List           (isPrefixOf, isSuffixOf, sortBy)
 import      Data.Map            (findWithDefault)
 import      Data.Ord            (comparing)
 import      Data.Monoid         (mappend)
+import      Data.Maybe          (fromJust)
 import      Hakyll
 import      Hakyll.Core.Identifier.Pattern (fromGlob)
 import      Hakyll.Core.Identifier (fromFilePath)
@@ -48,16 +49,6 @@ main = hakyllWith hakyllConfig $ do
             >>= saveSnapshot "body"
             >>= loadAndApplyTemplate (fromFilePath "templates/post.html") postContext
 
---    match (fromGlob postsPattern) $ (version "rtf") $ do
---        route   $ setExtension "rtf"
---        compile $ getResourceString
---            >>= withItemBody (unixFilter "pandoc" ["--from=markdown", "--to=rtf", "--output=-", "--standalone", "-"])
-
---    match (fromGlob postsPattern) $ (version "txt") $ do
---        route   $ setExtension "txt"
---        compile $ getResourceString
---            >>= withItemBody (unixFilter "pandoc" ["--from=markdown", "--to=plain", "--output=-", "--standalone", "-"])
-
     match (fromGlob (postsPattern ++ ".runghc")) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
@@ -93,20 +84,29 @@ main = hakyllWith hakyllConfig $ do
 
 cleanIndexUrls :: Item String -> Compiler (Item String)
 cleanIndexUrls = return . fmap (withUrls clean)
-    where 
-        idx = "index.html" 
-        clean url 
-            | idx `isSuffixOf` url = take (length url - length idx) url 
+    where
+        idx = "index.html"
+        clean url
+            | idx `isSuffixOf` url = take (length url - length idx) url
             | otherwise            = url
+
+stripIndexHtml :: String -> String
+stripIndexHtml url
+            | idx `isSuffixOf` url = take (length url - length idx) url
+            | otherwise            = url
+            where
+                idx = "index.html"
+
 
 -- TODO: fmap (maybe empty toUrl) . getRoute . itemIdentifier
 replaceAllLinks :: Item String -> Compiler (Item String)
 replaceAllLinks item = do
-    --let route = toUrl (getRoute (itemIdentifier item))
-    (return . fmap (withUrls clean)) item
+    route <- getRoute (itemIdentifier item)
+    let routeUrl = stripIndexHtml $ (feedRoot myFeedConfiguration) ++ toUrl (fromJust route)
+    (return . fmap (withUrls (clean routeUrl))) item
     where
-        clean url 
-            | not (isExternal url)  = ""
+        clean def url
+            | not (isExternal url)  = def
             | otherwise             = url
 
 
@@ -128,8 +128,8 @@ chronoFeed items = do
     return (take 10 ol)
 
 chronologicalItems :: [Item a] -> Compiler [Item a]
-chronologicalItems items = do 
-    withTime <- forM items $ \item -> do 
+chronologicalItems items = do
+    withTime <- forM items $ \item -> do
         utc <- getItemUTC defaultTimeLocale $ itemIdentifier item
         return (utc, item)
     return $ map snd $ reverse $ sortBy (comparing fst) withTime
